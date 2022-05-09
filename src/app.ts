@@ -1,6 +1,5 @@
 import 'module-alias/register'
 import 'dotenv/config'
-import '@/models'
 import bot from './helpers/bot'
 
 (async () => {

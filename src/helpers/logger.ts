@@ -1,8 +1,7 @@
-import { existsSync, appendFileSync, mkdirSync } from 'fs'
-import { resolve } from 'path'
 import bot from './bot'
+
 const ADMIN_ID = process.env.ADMIN_ID
-let errorsToReport = <Array<string>>[]
+let errorsToReport: string[] = []
 
 async function sendLogToMessage (): Promise<void> {
   if (errorsToReport.length >= 1) {
@@ -16,32 +15,15 @@ async function sendLogToMessage (): Promise<void> {
     }
 
 		for (const chunk of chunks)
-      await bot.api.sendMessage(ADMIN_ID, chunk).catch(err => saveLogAsFile(err))
+      await bot.api.sendMessage(ADMIN_ID, chunk)
   }
 }
 
-function saveLogAsFile (log: string): void {
-  const logsFolder = resolve('logs')
-  // create a logs directory if it doesn't exist
-  !existsSync(logsFolder) && mkdirSync(logsFolder)
-  const filename = new Date().toLocaleDateString().replace(/\./g, '-')
+export default ({ stack }: Error): void => {
+	if (!stack) return;
 
-  appendFileSync(logsFolder + `/${filename}.log`, log)
-}
-
-/**
- * Error handler
- * @param {Error}: stack: error store
- * @param {boolean}: saveAsFile: true - save as file without send to admin pm , false - give a choice to the handler
- */
-export default ({ stack }: Error, ctx?: any, saveAsFile: boolean = false): void => {
-  if (!stack) return;
-  // add datetime and new line
-  const errLog = `[${new Date().toLocaleString()}] ${stack}\r\n`;
-  // if the second param is a boolean, then save the log as a file instead of send as a message
-  if ((typeof saveAsFile === 'boolean' && saveAsFile) || !ADMIN_ID) return saveLogAsFile(errLog)
-
-  errorsToReport.push(errLog)
+	const curDateTime = new Date().toLocaleString()
+  errorsToReport.push(`[${curDateTime}] ${stack}\r\n`)
 }
 
 ADMIN_ID && setInterval(sendLogToMessage, +process.env.ERROR_MS_INTERVAL || 600000)
