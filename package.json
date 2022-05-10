@@ -1,5 +1,5 @@
 {
-  "name": "year-progress",
+  "name": "serious_life_bot",
   "private": true,
   "author": "kirofint <kirofint@gmail.com>",
   "scripts": {
@@ -10,6 +10,7 @@
     "deploy": "yarn build-ts && yarn watch-js"
   },
   "dependencies": {
+    "dayjs": "^1.11.2",
     "dotenv": "^10.0.0",
     "grammy": "^1.8.3",
     "module-alias": "^2.2.2",

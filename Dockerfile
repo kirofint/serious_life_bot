@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:16.3.0-alpine
 
 WORKDIR /app
 
@@ -7,4 +7,6 @@ COPY package.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
 
-RUN yarn && yarn deploy
+RUN yarn
+RUN yarn build-ts
+RUN yarn watch-js
